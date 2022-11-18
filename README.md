@@ -1,3 +1,4 @@
+[![CI to Docker Hub](https://github.com/thebigG/thebigg.dev/actions/workflows/main.yml/badge.svg)](https://github.com/thebigG/thebigg.dev/actions/workflows/main.yml)
 # thebigg.dev
 Source for thebigg.dev
 
