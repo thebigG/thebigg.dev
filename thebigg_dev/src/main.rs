@@ -34,14 +34,14 @@ impl Component for Model {
 
     fn create(ctx: &yew::Context<Self>) -> Self {
         Self {
-            navbar_active: true,
+            navbar_active: false,
         }
     }
 
     fn update(&mut self, ctx: &yew::Context<Self>, msg: Self::Message) -> bool {
         match msg {
             Msg::ToggleNavbar => {
-                self.navbar_active != self.navbar_active;
+                self.navbar_active = !self.navbar_active;
                 true
             }
         }
