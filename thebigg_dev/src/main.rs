@@ -1,5 +1,5 @@
 use pages::home;
-use pages::page_not_found;
+use pages::page_not_found::PageNotFound;
 use yew::html::Scope;
 use yew::prelude::*;
 use yew::Component;
@@ -60,11 +60,11 @@ impl Component for Model {
                     { "Powered by " }
                     <a href="https://yew.rs">{ "Yew" }</a>
                     { " using " }
-                    <a href="https://bulma.io">{ "Bulma" }</a>
-                    { " and images from " }
-                    <a href="https://unsplash.com">{ "Unsplash" }</a>
+                    <a href="https://bulma.io">
+                    <img src="images/bulma.png" alt="Bulma" style="width:32px;height:32px;"/></a>
                 </div>
             </footer>
+
         </BrowserRouter>
         }
     }
@@ -118,15 +118,15 @@ fn switch(routes: &Route) -> Html {
         }
 
         Route::NotFound => {
-            html! {  <page_not_found/>}
+            html! {  <PageNotFound/>}
         }
 
         Route::Post { id } => {
-            html! { <h1>{"Under consutrction...:{}"}</h1>}
+            html! { <h1>{format!("Under consutruction...:{id}")}</h1>}
         }
 
         Route::Posts => {
-            html! { <h1>{"Under consutrction...:{}"}</h1>}
+            html! { <h1>{"Under consutruction..."}</h1>}
         }
     }
 }
