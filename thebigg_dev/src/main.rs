@@ -48,7 +48,12 @@ impl Component for Model {
     }
 
     fn view(&self, ctx: &yew::Context<Self>) -> Html {
+        /// Create a trait called DarkComponent.
+        /// Make all of your components(including things like your footer tag) DarkComponents
+        /// I think this might make things easier to manage...maybe.
+        let dark_class = if !true { "dark-mode" } else { "" };
         html! {
+        <div class="">
         <BrowserRouter>
         { self.view_nav(ctx.link()) }
 
@@ -66,6 +71,7 @@ impl Component for Model {
             </footer>
 
         </BrowserRouter>
+        </div>
         }
     }
 }
@@ -122,11 +128,11 @@ fn switch(routes: &Route) -> Html {
         }
 
         Route::Post { id } => {
-            html! { <h1>{format!("Under consutruction...:{id}")}</h1>}
+            html! { <h1>{format!("Under construction...:{id}")}</h1>}
         }
 
         Route::Posts => {
-            html! { <h1>{"Under consutruction..."}</h1>}
+            html! { <h1>{"Under construction..."}</h1>}
         }
     }
 }
