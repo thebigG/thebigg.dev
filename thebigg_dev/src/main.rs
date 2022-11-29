@@ -82,6 +82,7 @@ impl Model {
         let active_class = if !navbar_active { "is-active" } else { "" };
 
         html! {
+            <div>
             <nav class="navbar is-primary" role="navigation" aria-label="main navigation">
                 <div class="navbar-brand">
                     <h1 class="navbar-item is-size-3">{ "thebigg.dev" }</h1>
@@ -112,6 +113,13 @@ impl Model {
                     </div>
                 </div>
             </nav>
+            <div class="switch">
+              <input id="switchExample" type="checkbox" name="switchExample" class={classes!("switch")} checked=false/>
+                <label for="switchExample">{"Dark Mode"}</label>
+            </div>
+            </div>
+
+
         }
     }
 }
