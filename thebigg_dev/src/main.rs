@@ -1,10 +1,9 @@
-use pages::home;
-use pages::page_not_found::PageNotFound;
 use yew::html::Scope;
 use yew::prelude::*;
-use yew::Component;
 use yew_router::prelude::*;
 
+use pages::home;
+use pages::page_not_found::PageNotFound;
 mod pages;
 
 #[derive(Routable, PartialEq, Clone, Debug)]
@@ -58,7 +57,7 @@ impl Component for Model {
         { self.view_nav(ctx.link()) }
 
             <main>
-                <Switch<Route> render={Switch::render(switch)} />
+                <Switch<Route> render={switch} />
             </main>
             <footer class="footer">
                 <div class="content has-text-centered">
@@ -117,7 +116,7 @@ impl Model {
     }
 }
 
-fn switch(routes: &Route) -> Html {
+fn switch(routes: Route) -> Html {
     match routes.clone() {
         Route::Home => {
             html! { <home::Home/> }
@@ -138,5 +137,5 @@ fn switch(routes: &Route) -> Html {
 }
 
 fn main() {
-    yew::start_app::<Model>();
+    yew::Renderer::<Model>::new().render();
 }
