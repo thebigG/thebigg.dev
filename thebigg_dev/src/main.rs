@@ -2,9 +2,17 @@ use yew::html::Scope;
 use yew::prelude::*;
 use yew_router::prelude::*;
 
+// use log::info;
+// use wasm_bindgen::JsValue;
 use pages::home;
 use pages::page_not_found::PageNotFound;
 mod pages;
+
+#[derive(Properties, PartialEq, Default, Debug, Clone)]
+pub struct DarkMode {
+    #[prop_or(true)]
+    pub active: bool,
+}
 
 #[derive(Routable, PartialEq, Clone, Debug)]
 pub enum Route {
@@ -18,6 +26,11 @@ pub enum Route {
     #[at("/404")]
     NotFound,
 }
+impl DarkMode {
+    pub fn new() -> Self {
+        Self { active: true }
+    }
+}
 
 pub enum Msg {
     ToggleNavbar,
@@ -29,7 +42,7 @@ pub struct Model {
 
 impl Component for Model {
     type Message = Msg;
-    type Properties = ();
+    type Properties = DarkMode;
 
     fn create(ctx: &yew::Context<Self>) -> Self {
         Self {
@@ -72,6 +85,10 @@ impl Component for Model {
         </BrowserRouter>
         </div>
         }
+    }
+
+    fn changed(&mut self, ctx: &Context<Self>, _old_props: &Self::Properties) -> bool {
+        true
     }
 }
 
@@ -126,8 +143,8 @@ impl Model {
 
 fn switch(routes: Route) -> Html {
     match routes.clone() {
-        Route::Home => {
-            html! { <home::Home/> }
+        Route::Home {} => {
+            html! { <home::Home /> }
         }
 
         Route::NotFound => {
@@ -145,5 +162,9 @@ fn switch(routes: Route) -> Html {
 }
 
 fn main() {
+    // wasm_logger::init(wasm_logger::Config::default());
+
+    // let object = JsValue::from("world");
+    // info!("Hello {}", object.as_string().unwrap());
     yew::Renderer::<Model>::new().render();
 }
