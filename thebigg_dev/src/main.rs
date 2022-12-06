@@ -1,3 +1,4 @@
+use log::info;
 use yew::html::Scope;
 use yew::prelude::*;
 use yew_router::prelude::*;
@@ -9,7 +10,7 @@ use pages::page_not_found::PageNotFound;
 mod pages;
 
 #[derive(Properties, PartialEq, Default, Debug, Clone)]
-pub struct DarkMode {
+pub struct Props {
     #[prop_or(true)]
     pub active: bool,
 }
@@ -26,7 +27,7 @@ pub enum Route {
     #[at("/404")]
     NotFound,
 }
-impl DarkMode {
+impl Props {
     pub fn new() -> Self {
         Self { active: true }
     }
@@ -34,6 +35,7 @@ impl DarkMode {
 
 pub enum Msg {
     ToggleNavbar,
+    DarkMode,
 }
 
 pub struct Model {
@@ -42,7 +44,7 @@ pub struct Model {
 
 impl Component for Model {
     type Message = Msg;
-    type Properties = DarkMode;
+    type Properties = Props;
 
     fn create(ctx: &yew::Context<Self>) -> Self {
         Self {
@@ -56,6 +58,10 @@ impl Component for Model {
                 self.navbar_active = !self.navbar_active;
                 true
             }
+            Msg::DarkMode => {
+                info!("DarkMode*********");
+                true
+            }
         }
     }
 
@@ -64,10 +70,14 @@ impl Component for Model {
         /// Make all of your components(including things like your footer tag) DarkComponents
         /// I think this might make things easier to manage...maybe.
         let dark_class = if !true { "dark-mode" } else { "" };
+
         html! {
         <div class="">
         <BrowserRouter>
+
+        //To make life easy, always wrap these html chunks into functions. Code looks better like that too anyway.
         { self.view_nav(ctx.link()) }
+        { self.view_toggle(ctx.link()) }
 
             <main>
                 <Switch<Route> render={switch} />
@@ -130,13 +140,24 @@ impl Model {
                     </div>
                 </div>
             </nav>
-            <div class="switch">
-              <input id="switchExample" type="checkbox" name="switchExample" class={classes!("switch")} checked=false/>
-                <label for="switchExample">{"Dark Mode"}</label>
-            </div>
             </div>
 
 
+        }
+    }
+
+    fn view_toggle(&self, link: &Scope<Self>) -> Html {
+        let Self { navbar_active, .. } = *self;
+
+        let active_class = if !navbar_active { "is-active" } else { "" };
+        // let dark_toggle = |_| Msg::DarkMode;
+        //"click" event does not seem to work input tag at the moment...
+        html! {
+         <div class="switch">
+           <input id="switchExample" type="checkbox" name="switchExample" class={classes!("switch")} checked=false onclick={link.callback(|_| Msg::DarkMode)}/>
+             <label for="switchExample">{"Dark Mode"}</label>
+            </div>
+            // <button onclick={link.callback(|_| Msg::DarkMode)}> </button>
         }
     }
 }
@@ -162,7 +183,9 @@ fn switch(routes: Route) -> Html {
 }
 
 fn main() {
-    // wasm_logger::init(wasm_logger::Config::default());
+    println!("main*********");
+    wasm_logger::init(wasm_logger::Config::default());
+    info!("Hello {}", 101);
 
     // let object = JsValue::from("world");
     // info!("Hello {}", object.as_string().unwrap());

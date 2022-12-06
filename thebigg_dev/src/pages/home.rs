@@ -1,8 +1,9 @@
+use log::info;
 use std::thread::Builder;
 
 use yew::prelude::*;
 
-use crate::DarkMode;
+use crate::Props;
 use yew::html::Buildable;
 
 pub enum Msg {
@@ -19,7 +20,7 @@ pub struct Home {
 
 impl Component for Home {
     type Message = Msg;
-    type Properties = DarkMode;
+    type Properties = Props;
 
     fn create(_ctx: &Context<Self>) -> Self {
         Self { value: 0 }
@@ -29,6 +30,7 @@ impl Component for Home {
         match msg {
             Msg::AddOne => {
                 self.value += 1;
+                info!("Hello from Home update  {}", 101);
                 // the value has changed so we need to
                 // re-render for it to appear on the page
                 // Figure a way to print in yew: https://yew.rs/docs/more/debugging
@@ -39,6 +41,7 @@ impl Component for Home {
     }
 
     fn view(&self, ctx: &Context<Self>) -> Html {
+        info!("Hello from Home view{}", 101);
         // This gives us a component's "`Scope`" which allows us to send messages, etc to the component.
         let link = ctx.link();
         html! {
@@ -53,6 +56,7 @@ impl Component for Home {
     }
 
     fn changed(&mut self, ctx: &Context<Self>, _old_props: &Self::Properties) -> bool {
+        info!("Hello from Home changed  {}", 101);
         println!("Hello from changed ");
         true
     }
