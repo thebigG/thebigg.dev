@@ -5,14 +5,14 @@ use yew_router::prelude::*;
 
 // use log::info;
 // use wasm_bindgen::JsValue;
-use pages::home;
+use pages::home::Home;
 use pages::page_not_found::PageNotFound;
 mod pages;
 
 #[derive(Properties, PartialEq, Default, Debug, Clone)]
 pub struct Props {
     #[prop_or(true)]
-    pub active: bool,
+    pub dark_mode: bool,
 }
 
 #[derive(Routable, PartialEq, Clone, Debug)]
@@ -29,17 +29,19 @@ pub enum Route {
 }
 impl Props {
     pub fn new() -> Self {
-        Self { active: true }
+        Self { dark_mode: true }
     }
 }
 
 pub enum Msg {
     ToggleNavbar,
     DarkMode,
+    AddOne,
 }
 
 pub struct Model {
     navbar_active: bool,
+    dark_mode: bool,
 }
 
 impl Component for Model {
@@ -49,6 +51,7 @@ impl Component for Model {
     fn create(ctx: &yew::Context<Self>) -> Self {
         Self {
             navbar_active: false,
+            dark_mode: false,
         }
     }
 
@@ -60,8 +63,13 @@ impl Component for Model {
             }
             Msg::DarkMode => {
                 info!("DarkMode*********");
+                // self.update();
+                // ctx.link().route();
+                // ctx.link().send_message(Msg::DarkMode);
+                self.dark_mode = !self.dark_mode;
                 true
             }
+            Msg::AddOne => true,
         }
     }
 
@@ -69,21 +77,23 @@ impl Component for Model {
         /// Create a trait called DarkComponent.
         /// Make all of your components(including things like your footer tag) DarkComponents
         /// I think this might make things easier to manage...maybe.
-        let dark_class = if !true { "dark-mode" } else { "" };
+        let dark_class = if !self.dark_mode { "dark-mode" } else { "" };
+
+        info!("view:main component");
 
         html! {
-        <div class="">
+        <div>
         <BrowserRouter>
 
+        <main>
+                <Switch<Route> render={switch} />
+        </main>
         //To make life easy, always wrap these html chunks into functions. Code looks better like that too anyway.
         { self.view_nav(ctx.link()) }
         { self.view_toggle(ctx.link()) }
 
-            <main>
-                <Switch<Route> render={switch} />
-            </main>
             <footer class="footer">
-                <div class="content has-text-centered">
+                <div class="content has-text-centered is-dark">
                     { "Powered by " }
                     <a href="https://yew.rs">{ "Yew" }</a>
                     { " using " }
@@ -106,11 +116,16 @@ impl Model {
     fn view_nav(&self, link: &Scope<Self>) -> Html {
         let Self { navbar_active, .. } = *self;
 
+        let dark_mode_class = if self.dark_mode { "is-dark" } else { "is-dark" };
+
         let active_class = if !navbar_active { "is-active" } else { "" };
+        info!("view_nav:main component");
+
+        ///For some reason "is-dark" class is not working even though it is in Bulma...
 
         html! {
-            <div>
-            <nav class="navbar is-primary" role="navigation" aria-label="main navigation">
+            <div class="is-dark">
+            <nav class="navbar is-dark" role="navigation" aria-label="main navigation">
                 <div class="navbar-brand">
                     <h1 class="navbar-item is-size-3">{ "thebigg.dev" }</h1>
 
@@ -147,9 +162,13 @@ impl Model {
     }
 
     fn view_toggle(&self, link: &Scope<Self>) -> Html {
-        let Self { navbar_active, .. } = *self;
+        let Self {
+            navbar_active,
+            dark_mode,
+        } = *self;
 
         let active_class = if !navbar_active { "is-active" } else { "" };
+
         // let dark_toggle = |_| Msg::DarkMode;
         //"click" event does not seem to work input tag at the moment...
         html! {
@@ -165,7 +184,7 @@ impl Model {
 fn switch(routes: Route) -> Html {
     match routes.clone() {
         Route::Home {} => {
-            html! { <home::Home /> }
+            html! { <Home /> }
         }
 
         Route::NotFound => {

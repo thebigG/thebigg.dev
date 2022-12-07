@@ -3,19 +3,24 @@ use std::thread::Builder;
 
 use yew::prelude::*;
 
-use crate::Props;
 use yew::html::Buildable;
-
-pub enum Msg {
-    AddOne,
-}
 
 // impl Builder for Home{
 
 // }
+pub enum Msg {
+    AddOne,
+}
+
+#[derive(Properties, PartialEq, Default, Debug, Clone)]
+pub struct Props {
+    #[prop_or(true)]
+    pub dark_mode: bool,
+}
 
 pub struct Home {
     value: i64,
+    dark_mode: bool,
 }
 
 impl Component for Home {
@@ -23,7 +28,10 @@ impl Component for Home {
     type Properties = Props;
 
     fn create(_ctx: &Context<Self>) -> Self {
-        Self { value: 0 }
+        Self {
+            value: 0,
+            dark_mode: false,
+        }
     }
 
     fn update(&mut self, _ctx: &Context<Self>, msg: Self::Message) -> bool {
@@ -36,7 +44,13 @@ impl Component for Home {
                 // Figure a way to print in yew: https://yew.rs/docs/more/debugging
                 // println!("{}", _ctx.props().active);
                 true
-            }
+            } // Msg::ToggleNavbar => {
+              //     true
+              // }
+              // Msg::DarkMode => {
+              //     info!("Hello from Home DarkMode  {}", 101);
+              //     true
+              // }
         }
     }
 
