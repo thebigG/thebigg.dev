@@ -1,6 +1,12 @@
 .ONESHELL:
 
-buid:
+check_format:
+	rustfmt --check thebigg_dev/src/*.rs
+
+format:
+	rustfmt  thebigg_dev/src/*.rs
+
+build:
 	cd thebigg_dev && cargo build
 
 nuke_images:

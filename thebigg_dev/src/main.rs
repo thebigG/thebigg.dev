@@ -85,13 +85,11 @@ impl Component for Model {
         <div>
         <BrowserRouter>
 
-        <main>
-                <Switch<Route> render={switch} />
-        </main>
         //To make life easy, always wrap these html chunks into functions. Code looks better like that too anyway.
         { self.view_nav(ctx.link()) }
-        { self.view_toggle(ctx.link()) }
-
+                    <main>
+                <Switch<Route> render={switch} />
+        </main>
             <footer class="footer">
                 <div class="content has-text-centered is-dark">
                     { "Powered by " }
@@ -116,7 +114,11 @@ impl Model {
     fn view_nav(&self, link: &Scope<Self>) -> Html {
         let Self { navbar_active, .. } = *self;
 
-        let dark_mode_class = if self.dark_mode { "is-dark" } else { "is-dark" };
+        let dark_mode = if self.dark_mode {
+            "is-dark"
+        } else {
+            "is-primary"
+        };
 
         let active_class = if !navbar_active { "is-active" } else { "" };
         info!("view_nav:main component");
@@ -124,8 +126,9 @@ impl Model {
         ///For some reason "is-dark" class is not working even though it is in Bulma...
 
         html! {
-            <div class="is-dark">
-            <nav class="navbar is-dark" role="navigation" aria-label="main navigation">
+
+            <div class={classes!(dark_mode)}>
+            <nav class={classes!("navbar", dark_mode)}  role="navigation" aria-label="main navigation">
                 <div class="navbar-brand">
                     <h1 class="navbar-item is-size-3">{ "thebigg.dev" }</h1>
 
@@ -151,8 +154,16 @@ impl Model {
                             <div class="navbar-link">
                                 { "More" }
                             </div>
+
                         </div>
+
                     </div>
+                <div class="navbar-end">
+                    <div class="navbar-item">
+
+            {self.view_toggle(link)}
+                    </div>
+                </div>
                 </div>
             </nav>
             </div>
@@ -167,16 +178,17 @@ impl Model {
             dark_mode,
         } = *self;
 
-        let active_class = if !navbar_active { "is-active" } else { "" };
+        // let active_class = if !navbar_active { "is-active" } else { "" };
 
         // let dark_toggle = |_| Msg::DarkMode;
         //"click" event does not seem to work input tag at the moment...
         html! {
+            <>
          <div class="switch">
-           <input id="switchExample" type="checkbox" name="switchExample" class={classes!("switch")} checked=false onclick={link.callback(|_| Msg::DarkMode)}/>
+           <input id="switchExample" type="checkbox" name="switchExample" class={classes!("switch")} checked={dark_mode} onclick={link.callback(|_| Msg::DarkMode)}/>
              <label for="switchExample">{"Dark Mode"}</label>
             </div>
-            // <button onclick={link.callback(|_| Msg::DarkMode)}> </button>
+            </>
         }
     }
 }
@@ -184,7 +196,7 @@ impl Model {
 fn switch(routes: Route) -> Html {
     match routes.clone() {
         Route::Home {} => {
-            html! { <Home /> }
+            html! { <Home dark_mode=true/> }
         }
 
         Route::NotFound => {

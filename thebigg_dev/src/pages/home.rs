@@ -10,6 +10,7 @@ use yew::html::Buildable;
 // }
 pub enum Msg {
     AddOne,
+    DarkMode,
 }
 
 #[derive(Properties, PartialEq, Default, Debug, Clone)]
@@ -45,12 +46,16 @@ impl Component for Home {
                 // println!("{}", _ctx.props().active);
                 true
             } // Msg::ToggleNavbar => {
-              //     true
-              // }
-              // Msg::DarkMode => {
-              //     info!("Hello from Home DarkMode  {}", 101);
-              //     true
-              // }
+            //     true
+            // }
+            // Msg::DarkMode => {
+            //     info!("Hello from Home DarkMode  {}", 101);
+            //     true
+            // }
+            Msg::DarkMode => {
+                info!("Hello from Home update *DarkMode*  {}", 101);
+                true
+            }
         }
     }
 
