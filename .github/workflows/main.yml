@@ -45,7 +45,7 @@ jobs:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USERNAME }}
           password: ${{ secrets.PASSWORD }}
-          script: make nuke_images && make run_app
+          script: make nuke_images && make run_app_nginx
 
 
 
