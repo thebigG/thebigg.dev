@@ -10,7 +10,7 @@ build:
 	cd thebigg_dev && cargo build
 
 nuke_images:
-	docker system prune -a --volumes
+	docker system prune -a -f --volumes
 
 run_container: build_image
 	docker run -d -p 8080:8080 thebigg.dev:thebigg.dev 
