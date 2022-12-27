@@ -1,131 +1,188 @@
 use log::info;
+use std::borrow::BorrowMut;
 use yew::html::Scope;
 use yew::prelude::*;
 use yew::props;
 
 use crate::msg_ctx::MessageContext;
+use yew::prelude::*;
 
-#[derive(Properties, PartialEq, Default, Debug, Clone)]
-pub struct Props {
-    #[prop_or(true)]
-    pub dark_mode: bool,
-}
+#[function_component]
+pub fn Producer() -> Html {
+    let msg_ctx = use_context::<MessageContext>().unwrap();
 
-impl Props {
-    pub fn new() -> Self {
-        Self { dark_mode: true }
-    }
-}
+    let onclick = Callback::from(move |_| {
+        info!("Hello {}", msg_ctx.inner);
+        // msg_ctx.inner;
+        msg_ctx.dispatch(!msg_ctx.inner);
+    });
 
-pub enum Msg {
-    ToggleNavbar,
-    DarkMode,
-    Noop,
-}
-
-/// Main is a producer of messages. This pattern is extremely useful for things like a global
-/// state(dark mode). https://github.com/thebigG/thebigg.dev/issues/1
-pub struct Producer {
-    dark_mode: bool,
-}
-
-impl Component for Producer {
-    type Message = Msg;
-    type Properties = Props;
-
-    fn create(ctx: &yew::Context<Self>) -> Self {
-        // let onclick = Callback::from(move |_| msg_ctx.dispatch("Message Received.".to_string()));
-
-        // ctx.link()
-        //     let (message, _) = ctx
-        // .link()
-        // .context(ctx.link().context(|_|{MessageContext::from()}))
-        // .expect("No Message Context Provided");
-        Self { dark_mode: false }
-    }
-
-    fn update(&mut self, ctx: &yew::Context<Self>, msg: Self::Message) -> bool {
-        match msg {
-            Msg::ToggleNavbar => true,
-            Msg::DarkMode => {
-                info!("DarkMode*********");
-                // self.update();
-                // ctx.link().route();
-                // ctx.link().send_message(Msg::DarkMode);
-                self.dark_mode = !self.dark_mode;
-                true
-            }
-            Msg::Noop => true,
-        }
-    }
-
-    fn view(&self, ctx: &yew::Context<Self>) -> Html {
-        /// Create a trait called DarkComponent.
-        /// Make all of your components(including things like your footer tag) DarkComponents
-        /// I think this might make things easier to manage...maybe.
-        let dark_class = if !self.dark_mode { "dark-mode" } else { "" };
-
-        let (msg_ctx, msg_ctx_handle) = ctx
-            .link()
-            .context(Callback::from(move |ctx: MessageContext| {
-                info!("Hello callback {}", "callback ");
-                // ctx.dispatch(!ctx.inner)
-                // ctx.
-            }))
-            .unwrap();
-
-        // let (msg_ctx, handle) = ctx.link().context(yew::Callback({})).unwrap();
-
-        let onclick_callback = Callback::from(move |_| {
-            info!("Hello start {}", msg_ctx.inner);
-            if msg_ctx.inner {
-                // msg_ctx.inner  = false;
-                info!("Hello false {}", msg_ctx.inner);
-            } else {
-                info!("Hello true {}", msg_ctx.inner);
-                // msg_ctx.inner  = true;
-            }
-            info!("Hello end {}", msg_ctx.inner);
-            // msg_ctx.inner;
-            msg_ctx.dispatch(!msg_ctx.inner);
-            // |_| Msg::DarkMode
-        });
-        info!("view:main component");
-        html! {
+    html! {
             <>
          <div class="switch">
-           <input id="switchExample" type="checkbox" name="switchExample" class={classes!("switch")} checked={self.dark_mode} onclick={onclick_callback }/>
+           <input id="switchExample" type="checkbox" name="switchExample" class={classes!("switch")} onclick={onclick }/>
              <label for="switchExample">{"Dark Mode"}</label>
             </div>
             </>
-        }
-    }
-
-    fn changed(&mut self, ctx: &Context<Self>, _old_props: &Self::Properties) -> bool {
-        true
     }
 }
 
-impl Producer {}
-
-// #[function_component]
-// pub fn Producer() -> Html {
-//     let msg_ctx = use_context::<MessageContext>().unwrap();
+//Possible implementation using structure components. Unfortunately I don't think it's worth it going all the way to Component structs since there is
+//a whole bunch Hook yew boilerplate code one has to write every time to iterate through states...
+// use crate::msg_ctx::MessageContext;
 //
 //
-//     let dark_mode  = true;
+// pub enum Msg {
+//     ToggleNavbar,
+//     DarkMode,
+//     Noop,
+// }
 //
-//     let onclick_callback = Callback::from(move |_| {
-//         info!("Hello {}", msg_ctx.inner);
-//         msg_ctx.dispatch(!msg_ctx.inner)
-//     });
+// /// Main is a producer of messages. This pattern is extremely useful for things like a global
+// /// state(dark mode). https://github.com/thebigG/thebigg.dev/issues/1
+// pub struct Producer {
+//     dark_mode: bool,
+//     msg_ctx: MessageContext
+// }
 //
-//         html! {
-//             <>
-//          <div class="switch">
-//            <input id="switchExample" type="checkbox" name="switchExample" class={classes!("switch")} checked={!dark_mode} onclick={onclick_callback }/>
-//              <label for="switchExample">{"Dark Mode"}</label>
-//             </div>
-//             </>
+// impl Component for Producer {
+//     type Message = ();
+//     type Properties = ();
+//
+//     fn create(ctx: &yew::Context<Self>) -> Self {
+//         // let onclick = Callback::from(move |_| msg_ctx.dispatch("Message Received.".to_string()));
+//
+//         // ctx.link()
+//         //     let (message, _) = ctx
+//         // .link()
+//         // .context(ctx.link().context(|_|{MessageContext::from()}))
+//         // .expect("No Message Context Provided");
+//         // let (msg_ctx, mut msg_ctx_handle) = ctx
+//         //     .link()
+//         //     .context(Callback::from(move |ctx: MessageContext| {
+//         //         info!("Hello callback {}", "callback ");
+//         //         // ctx.inner = true;
+//         //         // let mut msg_ctx = ctx.clone();
+//         //
+//         //         // ctx.reduce().inner = true;
+//         //
+//         //     }))
+//         //     .unwrap();
+//
+//             let (msg_ctx, mut msg_ctx_handle) = ctx
+//             .link()
+//             .context(Callback::from(move |ctx: MessageContext| {
+//                 info!("Hello callback {}", "callback ");
+//                 // ctx.inner = true;
+//                 // let mut msg_ctx = ctx.clone();
+//
+//                 // ctx.reduce().inner = true;
+//                 // ctx.dispatch(ctx.inner);
+//
+//             }))
+//             .unwrap();
+//         Self { dark_mode: false, msg_ctx}
+//
+//
+//     }
+//
+//     fn update(&mut self, ctx: &yew::Context<Self>, msg: Self::Message) -> bool {
+//         match msg {
+//             // Msg::ToggleNavbar => {
+//             //     info!("ToggleNavbar*********");
+//             //     true
+//             // },
+//             // Msg::DarkMode => {
+//             //     info!("DarkMode*********");
+//             //     // self.update();
+//             //     // ctx.link().route();
+//             //     // ctx.link().send_message(Msg::DarkMode);
+//             //     self.dark_mode = !self.dark_mode;
+//             //     true
+//             // }
+//             // Msg::Noop =>
+//             //     {
+//             //         info!(" Msg::Noop*********");
+//             //         true
+//             //     },
+//              _ => {
+//                  info!(" Msg::Noop*********");
+//                  true
+//              }
 //         }
+//     }
+//
+//     fn view(&self, ctx: &yew::Context<Self>) -> Html {
+//         /// Create a trait called DarkComponent.
+//         /// Make all of your components(including things like your footer tag) DarkComponents
+//         /// I think this might make things easier to manage...maybe.
+//         let dark_class = if !self.dark_mode { "dark-mode" } else { "" };
+//
+//
+//
+//         // let (msg_ctx, mut msg_ctx_handle) = ctx
+//         //     .link()
+//         //     .context(Callback::from(move |ctx: MessageContext| {
+//         //         info!("Hello callback {}", "callback ");
+//         //         // ctx.inner = true;
+//         //         // let mut msg_ctx = ctx.clone();
+//         //
+//         //         // ctx.reduce().inner = true;
+//         //         // ctx.dispatch(ctx.inner);
+//         //
+//         //     }))
+//         //     .unwrap();
+//
+//
+//         let (msg_ctx, msg_ctx_handle) = ctx
+//             .link().clone()
+//             .context(Callback::from(move |ctx: MessageContext| {
+//                 info!("Hello callback {}", "callback ");
+//             }))
+//             .unwrap();
+//
+//         // let (msg_ctx, handle) = ctx.link().context(yew::Callback({})).unwrap();
+//
+//         // let msg_ctx = ::yew::functional::Hook::run(
+//         //     use_context::<MessageContext>(),
+//         //     _ctx,
+//         // )
+//         // .unwrap();
+//
+//
+//         let onclick = Callback::from(move |_| {
+//             // info!("Hello start {}", msg_ctx.inner.with_subscriber());
+//             // if msg_ctx.inner {
+//             //      // let owned_msg_ctx = msg_ctx.clone() ;
+//             //     info!("Hello false {}", msg_ctx.inner);
+//             // } else {
+//             //     info!("Hello true {}", msg_ctx.inner);
+//             // }
+//             info!("Hello end {}", msg_ctx.inner);
+//
+//             // msg_ctx.
+//             // msg_ctx_handle.
+//             // Callback::from(|_|msg_ctx.dispatch(!msg_ctx.inner))
+//
+//             // msg_ctx.dispatch(!msg_ctx.inner)
+//
+//             *msg_ctx_handle.clone().dispatch(!msg_ctx.inner);
+//             // Msg::Noop
+//             // ctx.link().send_message(Msg::Noop)
+//             // ctx.link().callback(|_| Msg::Noop)
+//
+//         });
+//         info!("view:main component");
+//         html! {
+//          //    <>
+//          // <div class="switch">
+//          //   <input id="switchExample" type="checkbox" name="switchExample" class={classes!("switch")} checked={self.dark_mode} onclick={onclick_callback }/>
+//          //     <label for="switchExample">{"Dark Mode"}</label>
+//          //    </div>
+//          //    </>
+//             <button onclick={onclick}>
+//             {"PRESS ME"}
+//         </button>
+//         }
+//     }
 // }

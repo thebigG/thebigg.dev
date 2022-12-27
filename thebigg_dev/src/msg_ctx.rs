@@ -1,3 +1,4 @@
+use log::info;
 use std::rc::Rc;
 
 use yew::prelude::*;

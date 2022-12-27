@@ -37,11 +37,11 @@ impl Props {
         Self { dark_mode: true }
     }
 }
-
 pub enum Msg {
     ToggleNavbar,
     DarkMode,
     AddOne,
+    MessageContextUpdated(MessageContext),
 }
 
 /// Main is a producer of messages. This pattern is extremely useful for things like a global
@@ -49,23 +49,28 @@ pub enum Msg {
 pub struct Main {
     navbar_active: bool,
     dark_mode: bool,
+
+    message: MessageContext,
+    _context_listener: ContextHandle<MessageContext>,
 }
 
 impl Component for Main {
     type Message = Msg;
-    type Properties = Props;
+    type Properties = ();
 
     fn create(ctx: &yew::Context<Self>) -> Self {
         // let onclick = Callback::from(move |_| msg_ctx.dispatch("Message Received.".to_string()));
 
         // ctx.link()
-        //     let (message, _) = ctx
-        // .link()
-        // .context(ctx.link().context(|_|{MessageContext::from()}))
-        // .expect("No Message Context Provided");
+        let (message, context_listener) = ctx
+            .link()
+            .context(ctx.link().callback(Msg::MessageContextUpdated))
+            .expect("No Message Context Provided");
         Self {
             navbar_active: false,
             dark_mode: false,
+            message,
+            _context_listener: context_listener,
         }
     }
 
@@ -84,6 +89,15 @@ impl Component for Main {
                 true
             }
             Msg::AddOne => true,
+            Msg::MessageContextUpdated(message) => {
+                info!("Msg::MessageContextUpdated");
+                self.message = message;
+                // self.status  = !self.status;
+                // info!("status:{}", self.status);
+                info!("message:{}", self.message.inner);
+                self.dark_mode = self.message.inner;
+                true
+            }
         }
     }
 
@@ -175,7 +189,7 @@ impl Main {
                 <div class="navbar-end">
                     <div class="navbar-item">
 
-            // {self.view_toggle(link)}
+             {Self::get_producer()}
                     </div>
                 </div>
                 </div>
@@ -186,54 +200,12 @@ impl Main {
         }
     }
 
-    // fn view_toggle(&self, link: &Scope<Self>) -> Html {
-    //     // let Self {
-    //     //     navbar_active,
-    //     //     dark_mode,
-    //     //     self.msg_ctx
-    //     // } = *self;
-    //
-    //     // let active_class = if !navbar_active { "is-active" } else { "" };
-    //
-    //     // let dark_toggle = |_| Msg::DarkMode;
-    //     //"click" event does not seem to work input tag at the moment...
-    //
-    //     // let msg_ctx = use_context::<MessageContext>().unwrap();
-    //     //
-    //
-    //
-    //    let (msg_ctx, msg_ctx_handle) = link.context(Callback::from(move |ctx: MessageContext|
-    //        {
-    //            info!("Hello callback {}", "callback ");
-    //            // ctx.dispatch(!ctx.inner)
-    //            // ctx.
-    //        })).unwrap();
-    //
-    //     let onclick_callback = Callback::from(move |_| {
-    //         info!("Hello start {}", msg_ctx.inner);
-    //         if msg_ctx.inner {
-    //             // msg_ctx.inner  = false;
-    //             info!("Hello false {}", msg_ctx.inner);
-    //         }
-    //         else{
-    //             info!("Hello true {}", msg_ctx.inner);
-    //             // msg_ctx.inner  = true;
-    //         }
-    //         info!("Hello end {}", msg_ctx.inner);
-    //         // msg_ctx.inner;
-    //          msg_ctx.dispatch(!msg_ctx.inner);
-    //        |_| Msg::DarkMode
-    //
-    //     });
-    //     html! {
-    //         <>
-    //      <div class="switch">
-    //        <input id="switchExample" type="checkbox" name="switchExample" class={classes!("switch")} checked={self.dark_mode} onclick={onclick_callback }/>
-    //          <label for="switchExample">{"Dark Mode"}</label>
-    //         </div>
-    //         </>
-    //     }
-    // }
+    /// In this case, the Producer is simply the toggle that triggers dark mode.
+    fn get_producer() -> Html {
+        html! {
+            <Producer/>
+        }
+    }
 }
 
 fn switch(routes: Route) -> Html {
@@ -258,12 +230,8 @@ fn switch(routes: Route) -> Html {
 
 #[function_component]
 pub fn App() -> Html {
-    // <Producer />
-    // <Subscriber />
-    //     <StructComponentSubscriber />
     html! {
         <MessageProvider>
-            <Producer/>
             <Main/>
         </MessageProvider>
     }
