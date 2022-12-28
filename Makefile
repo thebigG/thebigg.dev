@@ -9,6 +9,9 @@ format:
 build:
 	cd thebigg_dev && cargo build
 
+build-release:
+	cd thebigg_dev && cargo build --release
+
 nuke_images:
 	docker system prune -a -f --volumes
 
