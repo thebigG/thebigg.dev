@@ -59,10 +59,7 @@ impl Component for Main {
     type Properties = ();
 
     fn create(ctx: &yew::Context<Self>) -> Self {
-        // let onclick = Callback::from(move |_| msg_ctx.dispatch("Message Received.".to_string()));
-
-        // ctx.link()
-        let (message, context_listener) = ctx
+        let (message, _context_listener) = ctx
             .link()
             .context(ctx.link().callback(Msg::MessageContextUpdated))
             .expect("No Message Context Provided");
@@ -70,7 +67,7 @@ impl Component for Main {
             navbar_active: false,
             dark_mode: false,
             message,
-            _context_listener: context_listener,
+            _context_listener,
         }
     }
 
@@ -81,20 +78,12 @@ impl Component for Main {
                 true
             }
             Msg::DarkMode => {
-                info!("DarkMode*********");
-                // self.update();
-                // ctx.link().route();
-                // ctx.link().send_message(Msg::DarkMode);
                 self.dark_mode = !self.dark_mode;
                 true
             }
             Msg::AddOne => true,
             Msg::MessageContextUpdated(message) => {
-                info!("Msg::MessageContextUpdated");
                 self.message = message;
-                // self.status  = !self.status;
-                // info!("status:{}", self.status);
-                info!("message:{}", self.message.inner);
                 self.dark_mode = self.message.inner;
                 true
             }
@@ -102,15 +91,14 @@ impl Component for Main {
     }
 
     fn view(&self, ctx: &yew::Context<Self>) -> Html {
-        /// Create a trait called DarkComponent.
-        /// Make all of your components(including things like your footer tag) DarkComponents
-        /// I think this might make things easier to manage...maybe.
-        let dark_class = if !self.dark_mode { "dark-mode" } else { "" };
-
-        info!("view:main component");
+        let dark_mode = if self.dark_mode {
+            "has-background-dark"
+        } else {
+            "is-primary"
+        };
 
         html! {
-        <div>
+        <div class={classes!(dark_mode)}>
         <BrowserRouter>
 
         //To make life easy, always wrap these html chunks into functions. Code looks better like that too anyway.
@@ -118,7 +106,7 @@ impl Component for Main {
                     <main>
                 <Switch<Route> render={switch} />
         </main>
-            <footer class="footer">
+            <footer class={classes!("footer", dark_mode)}>
                 <div class="content has-text-centered is-dark">
                     { "Powered by " }
                     <a href="https://yew.rs">{ "Yew" }</a>
@@ -238,9 +226,7 @@ pub fn App() -> Html {
 }
 
 fn main() {
-    println!("main*********");
     wasm_logger::init(wasm_logger::Config::default());
-    info!("Hello {}", 101);
 
     // let object = JsValue::from("world");
     // info!("Hello {}", object.as_string().unwrap());

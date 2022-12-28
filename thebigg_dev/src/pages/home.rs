@@ -3,14 +3,13 @@ use std::thread::Builder;
 
 use yew::prelude::*;
 
+use crate::msg_ctx::MessageContext;
 use yew::html::Buildable;
 
-// impl Builder for Home{
-
-// }
 pub enum Msg {
     AddOne,
     DarkMode,
+    MessageContextUpdated(MessageContext),
 }
 
 #[derive(Properties, PartialEq, Default, Debug, Clone)]
@@ -22,16 +21,24 @@ pub struct Props {
 pub struct Home {
     value: i64,
     dark_mode: bool,
+    message: MessageContext,
+    _context_listener: ContextHandle<MessageContext>,
 }
 
 impl Component for Home {
     type Message = Msg;
     type Properties = Props;
 
-    fn create(_ctx: &Context<Self>) -> Self {
+    fn create(ctx: &Context<Self>) -> Self {
+        let (message, _context_listener) = ctx
+            .link()
+            .context(ctx.link().callback(Msg::MessageContextUpdated))
+            .expect("No Message Context Provided");
         Self {
             value: 0,
             dark_mode: false,
+            message,
+            _context_listener,
         }
     }
 
@@ -39,21 +46,11 @@ impl Component for Home {
         match msg {
             Msg::AddOne => {
                 self.value += 1;
-                info!("Hello from Home update  {}", 101);
-                // the value has changed so we need to
-                // re-render for it to appear on the page
-                // Figure a way to print in yew: https://yew.rs/docs/more/debugging
-                // println!("{}", _ctx.props().active);
                 true
-            } // Msg::ToggleNavbar => {
-            //     true
-            // }
-            // Msg::DarkMode => {
-            //     info!("Hello from Home DarkMode  {}", 101);
-            //     true
-            // }
-            Msg::DarkMode => {
-                info!("Hello from Home update *DarkMode*  {}", 101);
+            }
+            Msg::DarkMode => true,
+            Msg::MessageContextUpdated(message) => {
+                self.dark_mode = message.inner;
                 true
             }
         }
@@ -61,11 +58,16 @@ impl Component for Home {
 
     fn view(&self, ctx: &Context<Self>) -> Html {
         info!("Hello from Home view{}", 101);
+        let dark_mode = if self.dark_mode {
+            "is-dark"
+        } else {
+            "is-primary"
+        };
         // This gives us a component's "`Scope`" which allows us to send messages, etc to the component.
         let link = ctx.link();
         html! {
             <div>
-               <h1>
+               <h1 >
                 {"Welcome To My Site"}
                </h1>
                 <button onclick={link.callback(|_| Msg::AddOne)}>{ "+1" }</button>
