@@ -1,5 +1,10 @@
+use gloo::utils::document;
+use js_sys::Array;
 use log::info;
+use wasm_bindgen::JsValue;
+use web_sys::{Element, Node};
 use yew::html::Scope;
+use yew::prelude::*;
 use yew::prelude::*;
 use yew_router::prelude::*;
 
@@ -97,8 +102,10 @@ impl Component for Main {
             "is-primary"
         };
 
+        self.toggle_dark_mode_for_root_node();
+
         html! {
-        <div class={classes!(dark_mode)}>
+        <div class={classes!(dark_mode, "is-fullheight")}>
         <BrowserRouter>
 
         //To make life easy, always wrap these html chunks into functions. Code looks better like that too anyway.
@@ -192,6 +199,21 @@ impl Main {
     fn get_producer() -> Html {
         html! {
             <Producer/>
+        }
+    }
+
+    fn toggle_dark_mode_for_root_node(&self) {
+        let dark_class_background = "has-background-dark";
+        let root: Element = document().document_element().unwrap();
+        let classes: Array = Array::new();
+
+        let dark_class_js: JsValue = JsValue::from_str(dark_class_background);
+
+        if self.dark_mode {
+            classes.push(&dark_class_js);
+            root.class_list().add(&classes);
+        } else {
+            root.class_list().remove_1(&dark_class_background);
         }
     }
 }
