@@ -59,20 +59,38 @@ impl Component for Home {
     fn view(&self, ctx: &Context<Self>) -> Html {
         info!("Hello from Home view{}", 101);
         let dark_mode = if self.dark_mode {
-            "is-dark"
+            "has-background-dark"
         } else {
             "is-primary"
         };
+
+        let dark_mode_text = if self.dark_mode {
+            "has-text-info-light"
+        } else {
+            ""
+        };
+
         // This gives us a component's "`Scope`" which allows us to send messages, etc to the component.
         let link = ctx.link();
         html! {
-            <div>
-               <h1 >
-                {"Welcome To My Site"}
-               </h1>
-                <button onclick={link.callback(|_| Msg::AddOne)}>{ "+1" }</button>
-                <p>{ self.value }</p>
-            </div>
+            <div class={classes!("container", "is-max-desktop", dark_mode)}>
+                <div class={classes!("level","card", dark_mode)}>
+                  <div class={classes!(dark_mode_text, "content", "level-left")}>
+                        <p class="level-item has-text-centered">
+                                {"Hi there stranger, my name is Lorenzo and I'm a programmer."}
+                                <br/>
+                                {"Welcome to this corner of the internet!"}
+                        </p>
+                  </div>
+                  <div class="level-right">
+                    <div class="level-item">
+                     <img src="images/profile_pic.png" alt="profile picture" style="width:256px;height:256px;"/>
+                     </div>
+                   </div>
+                        // <button onclick={link.callback(|_| Msg::AddOne)}>{ "+1" }</button>
+                        // <p>{ self.value }</p>
+                  </div>
+                </div>
         }
     }
 
