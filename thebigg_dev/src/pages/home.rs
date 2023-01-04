@@ -36,7 +36,7 @@ impl Component for Home {
             .expect("No Message Context Provided");
         Self {
             value: 0,
-            dark_mode: false,
+            dark_mode: message.inner,
             message,
             _context_listener,
         }
@@ -57,7 +57,6 @@ impl Component for Home {
     }
 
     fn view(&self, ctx: &Context<Self>) -> Html {
-        info!("Hello from Home view{}", 101);
         let dark_mode = if self.dark_mode {
             "has-background-dark"
         } else {
@@ -92,11 +91,5 @@ impl Component for Home {
                   </div>
                 </div>
         }
-    }
-
-    fn changed(&mut self, ctx: &Context<Self>, _old_props: &Self::Properties) -> bool {
-        info!("Hello from Home changed  {}", 101);
-        println!("Hello from changed ");
-        true
     }
 }
