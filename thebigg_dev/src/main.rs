@@ -151,7 +151,7 @@ impl Main {
         html! {
 
             <div class={classes!(dark_mode)}>
-            <nav class={classes!("navbar", dark_mode)}  role="navigation" aria-label="main navigation">
+            <nav class={classes!("navbar", "mb-3", dark_mode)}  role="navigation" aria-label="main navigation">
                 <div class="navbar-brand">
                     <h1 class="navbar-item is-size-3">{ "thebigg.dev" }</h1>
 
