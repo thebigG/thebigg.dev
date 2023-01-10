@@ -1,15 +1,23 @@
 use log::info;
 use std::borrow::BorrowMut;
-use yew::html::Scope;
+use web_sys::window;
 use yew::prelude::*;
 use yew::props;
+use yew_hooks::prelude::*;
 
 use crate::msg_ctx::MessageContext;
-use yew::prelude::*;
 
 #[function_component]
 pub fn Producer() -> Html {
     let msg_ctx = use_context::<MessageContext>().unwrap();
+    let msg_ctx_clone = msg_ctx.clone();
+    use_effect_once(|| {
+        info!("This code only runs once after page loads");
+        // let result_w =  window().unwrap().match_media("(prefers-color-scheme: dark)").ok().unwrap().unwrap();
+        // msg_ctx_clone.dispatch(result_w.matches());
+
+        || info!("Running clean-up of effect on unmount")
+    });
 
     let onclick = Callback::from(move |_| {
         info!("Hello {}", msg_ctx.inner);
@@ -24,6 +32,50 @@ pub fn Producer() -> Html {
              <label for="switchExample">{"Dark Mode"}</label>
             </div>
             </>
+    }
+}
+
+// /// `use_effect_once` demo
+// #[function_component(MyComponent)]
+// fn my_component() -> Html {
+//     use_effect_once(|| {
+//         info!("Running effect once on mount");
+//
+//         || alert("Running clean-up of effect on unmount")
+//     });
+//
+//     html! {
+//         <>{ "My Component" }</>
+//     }
+// }
+
+#[function_component(UseEffectOnce)]
+pub fn effect_once() -> Html {
+    let toggle = use_toggle("Mount", "Unmount");
+    let toggle = toggle.clone();
+    toggle.toggle();
+    // let onclick = {
+    //     let toggle = toggle.clone();
+    //     Callback::from(move |_: _| toggle.toggle())
+    // };
+
+    html! {
+        <div class="app">
+            // <header class="app-header">
+            //     <div>
+            //         <button {onclick}>{ *toggle }</button>
+            //         <p>
+            //             {
+            //                 if *toggle == "Unmount" {
+            //                     html! { <MyComponent /> }
+            //                 } else {
+            //                     html! {}
+            //                 }
+            //             }
+            //         </p>
+            //     </div>
+            // </header>
+        </div>
     }
 }
 
