@@ -102,6 +102,12 @@ impl Component for Main {
             "is-primary"
         };
 
+        let dark_mode_text = if self.dark_mode {
+            "has-text-info-light"
+        } else {
+            ""
+        };
+
         self.toggle_dark_mode_for_root_node();
 
         html! {
@@ -113,8 +119,14 @@ impl Component for Main {
                     <main>
                 <Switch<Route> render={switch} />
         </main>
-            <footer class={classes!("footer", dark_mode)}>
-                <div class="content has-text-centered is-dark">
+            <footer class={classes!("footer", dark_mode, dark_mode_text)}>
+                <div class="has-text-centered">
+                    <a href="https://github.com/thebigG">
+                    <img src="images/icons8-github.svg" alt="github" style="width:32px;height:32px;"/></a>
+                    <a href="https://www.linkedin.com/in/gomezlorenzo/">
+                    <img src="images/icons8-linkedin-circled.svg" alt="linkedin" style="width:32px;height:32px;"/></a>
+                </div>
+                <div class={classes!("content", "has-text-centered", dark_mode)}>
                     { "Powered by " }
                     <a href="https://yew.rs">{ "Yew" }</a>
                     { " using " }
