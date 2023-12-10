@@ -264,7 +264,6 @@ pub fn App() -> Html {
 }
 
 fn main() {
-    const hash: &'static str = run_command_str!("git", "rev-parse", "HEAD");
     wasm_logger::init(wasm_logger::Config::default());
 
     // let object = JsValue::from("world");
