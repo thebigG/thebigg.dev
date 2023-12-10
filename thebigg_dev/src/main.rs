@@ -1,6 +1,8 @@
+use compile_time_run::{run_command, run_command_str};
 use gloo::utils::document;
 use js_sys::Array;
 use log::info;
+use std::process::Command;
 use wasm_bindgen::JsValue;
 use web_sys::{Element, Node};
 use yew::html::Scope;
@@ -102,11 +104,9 @@ impl Component for Main {
             "is-primary"
         };
 
-        let dark_mode_text = if self.dark_mode {
-            "has-text-info-light"
-        } else {
-            ""
-        };
+        let dark_mode_text = if self.dark_mode { "has-text-light" } else { "" };
+
+        let dark_mode_link_hover_text = if self.dark_mode { "dark-mode-link" } else { "" };
 
         self.toggle_dark_mode_for_root_node();
 
@@ -119,19 +119,23 @@ impl Component for Main {
                     <main>
                 <Switch<Route> render={switch} />
         </main>
-            <footer class={classes!("footer", dark_mode, dark_mode_text)}>
+            <footer class={classes!("footer", dark_mode, dark_mode_text, "is-primary")}>
                 <div class="has-text-centered">
                     <a href="https://github.com/thebigG">
                     <img src="images/icons8-github.svg" alt="github" style="width:32px;height:32px;"/></a>
                     <a href="https://www.linkedin.com/in/gomezlorenzo/">
                     <img src="images/icons8-linkedin-circled.svg" alt="linkedin" style="width:32px;height:32px;"/></a>
                 </div>
-                <div class={classes!("content", "has-text-centered", dark_mode)}>
+                <div class={classes!("content", "has-text-centered", dark_mode, dark_mode_text)}>
                     { "Powered by " }
-                    <a href="https://yew.rs">{ "Yew" }</a>
+                    <a class={classes!(dark_mode_link_hover_text)}  href="https://yew.rs">{ "Yew" }</a>
                     { " using " }
                     <a href="https://bulma.io">
                     <img src="images/bulma.png" alt="Bulma" style="width:32px;height:32px;"/></a>
+                </div>
+                    <div class={classes!("has-text-centered", dark_mode, dark_mode_text, dark_mode_link_hover_text)}>
+                <a class={classes!(dark_mode_link_hover_text)}  href={format!("https://github.com/thebigG/thebigg.dev/commit/{}",run_command_str!("git", "rev-parse", "--short", "HEAD") ) }>
+                    { run_command_str!("git", "rev-parse", "--short", "HEAD") }</a>
                 </div>
             </footer>
 
@@ -260,6 +264,7 @@ pub fn App() -> Html {
 }
 
 fn main() {
+    const hash: &'static str = run_command_str!("git", "rev-parse", "HEAD");
     wasm_logger::init(wasm_logger::Config::default());
 
     // let object = JsValue::from("world");

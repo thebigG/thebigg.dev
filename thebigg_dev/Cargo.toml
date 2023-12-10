@@ -32,3 +32,4 @@ gloo = "0.8.0"
 
 #https://github.com/yewstack/yew/issues/3366#issuecomment-1656704304
 implicit-clone = "0.3.6"
+compile-time-run = "0.2.12"
