@@ -1,4 +1,4 @@
-FROM rust:1.64
+FROM rust:1.70
 RUN useradd -ms /bin/bash lgomez
 USER lgomez
 WORKDIR /home/lgomez
