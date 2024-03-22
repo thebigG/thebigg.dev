@@ -17,6 +17,7 @@ use msg_ctx::MessageContext;
 use msg_ctx::MessageProvider;
 use pages::home::Home;
 use pages::page_not_found::PageNotFound;
+use pages::posts::Posts;
 mod pages;
 mod producer;
 use producer::Producer;
@@ -249,7 +250,7 @@ fn switch(routes: Route) -> Html {
         }
 
         Route::Posts => {
-            html! { <h1>{"Under construction..."}</h1>}
+            html! { <Posts dark_mode=true/>}
         }
     }
 }
