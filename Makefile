@@ -32,4 +32,4 @@ run_app_nginx:
 	docker pull thebigg1/thebigg.dev
 	docker rm -f thebigg_dev
 	service nginx restart
-	docker run --name thebigg_dev -d -p 8080:8080 thebigg1/thebigg.dev:latest
+	docker run --restart always  --name thebigg_dev -d -p 8080:8080 thebigg1/thebigg.dev:latest
